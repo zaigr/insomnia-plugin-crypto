@@ -8,7 +8,7 @@ const validateAlgorithmAndKey = (algorithm, key) => {
     throw new Error(`Unsupported algorithm: ${algorithm}. Supported algorithms are: ${SUPPORTED_ALGORITHMS.join(', ')}`);
   }
 
-  const keyBytes = Buffer.from(key, 'hex');
+  const keyBytes = Buffer.from(key, 'utf8');
   const requiredKeyLength = parseInt(algorithm.split('-')[1], 10) / 8;
 
   if (keyBytes.length !== requiredKeyLength) {
@@ -16,19 +16,25 @@ const validateAlgorithmAndKey = (algorithm, key) => {
   }
 };
 
-const decryptResponse = (response, algorithm, key) => {
+const decrypt = (response, algorithm, key) => {
   try {
     validateAlgorithmAndKey(algorithm, key);
 
-    const keyBuffer = Buffer.from(key, 'hex');
-    const iv = response.slice(0, 16);
-    const encryptedData = response.slice(16);
+    // TODO: make base64 optional
+    const base64String = response.toString('utf-8');
+    const encryptedBuffer  = Buffer.from(base64String, 'base64');
 
+    // TODO: make iv as optional param
+    const iv = encryptedBuffer.slice(0, 16);
+    const encryptedData = encryptedBuffer.slice(16);
+
+    const keyBuffer = Buffer.from(key, 'utf8');
     const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-    let decrypted = decipher.update(encryptedData);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
 
-    return decrypted.toString('utf8');
+    let decrypted = decipher.update(encryptedData, 'binary', 'utf8');
+    decrypted += decipher.final('utf-8');
+
+    return decrypted;
   } catch (error) {
     console.error('Decryption error:', error.message);
     throw error;
@@ -36,5 +42,5 @@ const decryptResponse = (response, algorithm, key) => {
 };
 
 module.exports = {
-  decryptResponse
+  decrypt
 };

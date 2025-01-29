@@ -3,7 +3,7 @@ const {
   isResponseDecryptionEnabled,
 } = require('./store');
 
-const { decryptResponse } = require('./encrypt');
+const { decrypt } = require('./encrypt');
 
 module.exports.responseHooks = [
   async (context) => {
@@ -18,7 +18,7 @@ module.exports.responseHooks = [
       }
 
       try {
-        const decryptedBody = decryptResponse(context.response.getBody(), algorithm, key);
+        const decryptedBody = decrypt(context.response.getBody(), algorithm, key);
         context.response.setBody(decryptedBody);
       } catch (error) {
         console.error('Decryption failed:', error.message);
