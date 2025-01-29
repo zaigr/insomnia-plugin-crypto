@@ -15,7 +15,8 @@
   "author": "zaigr",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "win-install": "xcopy /Y *.js %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto && xcopy /Y *.json %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
