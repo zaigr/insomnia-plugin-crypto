@@ -16,31 +16,44 @@ const validateAlgorithmAndKey = (algorithm, key) => {
   }
 };
 
+const encrypt = (request, algorithm, key) => {
+  validateAlgorithmAndKey(algorithm, key);
+
+  const keyBuffer = Buffer.from(key, 'utf8');
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, keyBuffer, iv);
+
+  let encrypted = cipher.update(request, 'utf-8', 'binary');
+  encrypted += cipher.final('binary');
+
+  const encryptedBuffer = Buffer.concat([iv, Buffer.from(encrypted, 'binary')]);
+  const base64String = encryptedBuffer.toString('base64'); // TODO: make base64 optional
+
+  return base64String;
+};
+
 const decrypt = (response, algorithm, key) => {
-  try {
-    validateAlgorithmAndKey(algorithm, key);
+  validateAlgorithmAndKey(algorithm, key);
 
-    // TODO: make base64 optional
-    const base64String = response.toString('utf-8');
-    const encryptedBuffer  = Buffer.from(base64String, 'base64');
+  // TODO: make base64 optional
+  const base64String = response.toString('utf-8');
+  const encryptedBuffer  = Buffer.from(base64String, 'base64');
 
-    // TODO: make iv as optional param
-    const iv = encryptedBuffer.slice(0, 16);
-    const encryptedData = encryptedBuffer.slice(16);
+  // TODO: make iv as optional param
+  const iv = encryptedBuffer.slice(0, 16);
+  const encryptedData = encryptedBuffer.slice(16);
 
-    const keyBuffer = Buffer.from(key, 'utf8');
-    const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+  const keyBuffer = Buffer.from(key, 'utf8');
+  const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
 
-    let decrypted = decipher.update(encryptedData, 'binary', 'utf8');
-    decrypted += decipher.final('utf-8');
+  let decrypted = decipher.update(encryptedData, 'binary', 'utf8');
+  decrypted += decipher.final('utf-8');
 
-    return decrypted;
-  } catch (error) {
-    console.error('Decryption error:', error.message);
-    throw error;
-  }
+  return decrypted;
 };
 
 module.exports = {
-  decrypt
+  SUPPORTED_ALGORITHMS,
+  encrypt,
+  decrypt,
 };
