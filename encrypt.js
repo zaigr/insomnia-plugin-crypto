@@ -53,6 +53,7 @@ const decrypt = (response, algorithm, key) => {
 };
 
 module.exports = {
+  SUPPORTED_ALGORITHMS,
   encrypt,
   decrypt,
 };

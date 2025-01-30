@@ -10,15 +10,24 @@ const {
   decrypt,
 } = require('./encrypt');
 
+const ALGORITHM_ENV = 'crypto-alg';
+const KEY_ENV = 'crypto-key';
+
+const alertOnMissingEnvConfig = (title, context) => {
+  console.error(`${title}: Missing algorithm or key in environment`);
+  context.app.alert(title, 'Missing algorithm or key in environment variables. '
+    + `Please set the following environment variables: '${ALGORITHM_ENV}' '${KEY_ENV}'`);
+};
+
 module.exports.responseHooks = [
   async (context) => {
     const enabled = await isResponseDecryptionEnabled(context.store, context.request.getId());
     if (enabled) {
-      const algorithm = context.request.getEnvironmentVariable('crypto-alg');
-      const key = context.request.getEnvironmentVariable('crypto-key');
+      const algorithm = context.request.getEnvironmentVariable(ALGORITHM_ENV);
+      const key = context.request.getEnvironmentVariable(KEY_ENV);
 
       if (!algorithm || !key) {
-        console.error('Decryption failed: Missing algorithm or key in environment');
+        alertOnMissingEnvConfig('Response Decryption Failed', context);
         return;
       }
 
@@ -26,8 +35,7 @@ module.exports.responseHooks = [
         const decryptedBody = decrypt(context.response.getBody(), algorithm, key);
         context.response.setBody(decryptedBody);
       } catch (error) {
-        console.error('Decryption failed:', error.message);
-        context.response.setBody(`Decryption failed: ${error.message}`);
+        context.app.alert('Decryption failed:', error.message);
       }
     }
   }
@@ -37,11 +45,11 @@ module.exports.requestHooks = [
   async (context) => {
     const enabled = await isRequestEncryptionEnabled(context.store, context.request.getId());
     if (enabled) {
-      const algorithm = context.request.getEnvironmentVariable('crypto-alg');
-      const key = context.request.getEnvironmentVariable('crypto-key');
+      const algorithm = context.request.getEnvironmentVariable(ALGORITHM_ENV);
+      const key = context.request.getEnvironmentVariable(KEY_ENV);
 
       if (!algorithm || !key) {
-        console.error('Encryption failed: Missing algorithm or key in environment');
+        alertOnMissingEnvConfig('Request Encryption Failed', context);
         return;
       }
 
@@ -49,8 +57,7 @@ module.exports.requestHooks = [
         const encryptedBody = encrypt(context.request.getBody().text, algorithm, key);
         context.request.setBodyText(encryptedBody);
       } catch (error) {
-        console.error('Encryption failed:', error.message);
-        throw error;
+        context.app.alert('Encryption failed:', error.message);
       }
     }
   }
