@@ -1,3 +1,5 @@
+[![build](https://github.com/zaigr/insomnia-plugin-crypto/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/zaigr/insomnia-plugin-crypto/actions/workflows/build.yml)
+
 # Insomnia Plugin Crypto
 
 This is a plugin for [Insomnia](https://insomnia.rest/) that allows encrypting and decrypting request/response payloads using Node.js crypto.
