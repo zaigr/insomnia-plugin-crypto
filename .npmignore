@@ -1,0 +1,6 @@
+.vscode/
+.github/
+test/
+
+.editorconfig
+eslint.config.mjs

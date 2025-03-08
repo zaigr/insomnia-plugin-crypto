@@ -1,6 +1,6 @@
 {
   "name": "insomnia-plugin-crypto",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "app.js",
   "insomnia": {
     "name": "crypto",
@@ -9,18 +9,27 @@
       "name": "zaigr",
       "icon": "https://avatars.githubusercontent.com/u/30410025?v=4"
     },
+    "images": {
+      "icon": "assets/icon.svg"
+    },
     "unlisted": false
   },
   "homepage": "https://github.com/zaigr/insomnia-plugin-crypto",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaigr/insomnia-plugin-crypto.git"
+  },
   "author": "zaigr",
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "win-install": "del /Q %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto && xcopy /Y *.js %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto && xcopy /Y *.json %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto"
+    "win-install": "del /Q %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto && xcopy /Y *.js %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto && xcopy /Y *.json %HOME%\\AppData\\Roaming\\Insomnia\\plugins\\insomnia-plugin-crypto",
+    "test": "mocha"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "eslint": "^9.19.0",
-    "globals": "^15.14.0"
+    "globals": "^15.14.0",
+    "mocha": "^11.1.0"
   }
 }
