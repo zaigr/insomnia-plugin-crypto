@@ -32,7 +32,8 @@ module.exports.responseHooks = [
       }
 
       try {
-        const decryptedBody = decrypt(context.response.getBody(), algorithm, key);
+        const body = await context.response.getBody();
+        const decryptedBody = decrypt(body, algorithm, key);
         context.response.setBody(decryptedBody);
       } catch (error) {
         context.app.alert('Decryption failed:', error.message);
