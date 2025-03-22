@@ -1,33 +1,21 @@
-const enableDecryptionKey = 'enableDecryption';
-const enableEncryptionKey = 'enableEncryption';
+const enableResponseDecryption = 'enableDecryption';
+const enableRequestEncryption = 'enableEncryption';
 
-const enableResponseDecryption = async (store, itemId, enable) => {
-  const key = `${enableDecryptionKey}:${itemId}`;
+const setFeature = async (store, itemId, feature, enable) => {
+  const key = `${feature}:${itemId}`;
   await store.setItem(key, enable);
-};
+}
 
-const isResponseDecryptionEnabled = async (store, itemId) => {
-  const key = `${enableDecryptionKey}:${itemId}`;
+const isFeatureEnabled = async (store, itemId, feature) => {
+  const key = `${feature}:${itemId}`;
   const storeValue = await store.getItem(key);
 
   return storeValue === 'true' ? true : false;
-};
-
-const enableRequestEncryption = async (store, itemId, enable) => {
-  const key = `${enableEncryptionKey}:${itemId}`;
-  await store.setItem(key, enable);
-};
-
-const isRequestEncryptionEnabled = async (store, itemId) => {
-  const key = `${enableEncryptionKey}:${itemId}`;
-  const storeValue = await store.getItem(key);
-
-  return storeValue === 'true' ? true : false;
-};
+}
 
 module.exports = {
-  enableResponseDecryption,
-  isResponseDecryptionEnabled,
+  setFeature,
+  isFeatureEnabled,
   enableRequestEncryption,
-  isRequestEncryptionEnabled,
+  enableResponseDecryption
 };

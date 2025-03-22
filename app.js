@@ -1,8 +1,8 @@
 const {
-  enableResponseDecryption,
-  isResponseDecryptionEnabled,
+  setFeature,
+  isFeatureEnabled,
   enableRequestEncryption,
-  isRequestEncryptionEnabled
+  enableResponseDecryption
 } = require('./store');
 
 const {
@@ -21,7 +21,7 @@ const alertOnMissingEnvConfig = (title, context) => {
 
 module.exports.responseHooks = [
   async (context) => {
-    const enabled = await isResponseDecryptionEnabled(context.store, context.request.getId());
+    const enabled = await isFeatureEnabled(context.store, context.request.getId(), enableResponseDecryption);
     if (enabled) {
       const algorithm = context.request.getEnvironmentVariable(ALGORITHM_ENV);
       const key = context.request.getEnvironmentVariable(KEY_ENV);
@@ -44,7 +44,7 @@ module.exports.responseHooks = [
 
 module.exports.requestHooks = [
   async (context) => {
-    const enabled = await isRequestEncryptionEnabled(context.store, context.request.getId());
+    const enabled = await isFeatureEnabled(context.store, context.request.getId(), enableRequestEncryption);
     if (enabled) {
       const algorithm = context.request.getEnvironmentVariable(ALGORITHM_ENV);
       const key = context.request.getEnvironmentVariable(KEY_ENV);
@@ -71,7 +71,7 @@ module.exports.requestActions = [
       const { store } = context;
       const { request } = data;
 
-      const currentState = await isResponseDecryptionEnabled(store, request._id);
+      const currentState = await setFeature(store, request._id);
 
       const newState = !currentState;
       await enableResponseDecryption(store, request._id, newState);
