@@ -9,5 +9,5 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "patch"
-          - "minor"
+          - "semver-patch"
+          - "semver-minor"
