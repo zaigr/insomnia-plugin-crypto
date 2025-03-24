@@ -26,22 +26,15 @@ const encrypt = (request, algorithm, key) => {
   let encrypted = cipher.update(request, 'utf-8', 'binary');
   encrypted += cipher.final('binary');
 
-  const encryptedBuffer = Buffer.concat([iv, Buffer.from(encrypted, 'binary')]);
-  const base64String = encryptedBuffer.toString('base64'); // TODO: make base64 optional
-
-  return base64String;
+  return Buffer.concat([iv, Buffer.from(encrypted, 'binary')]);
 };
 
 const decrypt = (response, algorithm, key) => {
   validateAlgorithmAndKey(algorithm, key);
 
-  // TODO: make base64 optional
-  const base64String = response.toString('utf-8');
-  const encryptedBuffer  = Buffer.from(base64String, 'base64');
-
   // TODO: make iv as optional param
-  const iv = encryptedBuffer.slice(0, 16);
-  const encryptedData = encryptedBuffer.slice(16);
+  const iv = response.slice(0, 16);
+  const encryptedData = response.slice(16);
 
   const keyBuffer = Buffer.from(key, 'utf8');
   const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);

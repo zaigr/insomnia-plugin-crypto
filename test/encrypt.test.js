@@ -86,10 +86,10 @@ describe('encrypt.js', () => {
 
   it('should not be equal when decrypting corrupted data', () => {
     let encrypted = encrypt(text, algorithm, key);
-    encrypted = 'X' + encrypted.substring(1);
+    const corruptedEncrypted = Buffer.concat([Buffer.from('X'), encrypted.slice(1)]);
 
-    const decrypted = decrypt(encrypted, algorithm, key);
-
+    const decrypted = decrypt(corruptedEncrypted, algorithm, key);
+    
     assert.notStrictEqual(decrypted, text);
   });
 
