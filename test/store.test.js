@@ -1,10 +1,10 @@
 const assert = require('assert');
 const { describe, it, beforeEach } = require('mocha');
 const {
-  enableResponseDecryption,
-  isResponseDecryptionEnabled,
+  setFeature,
+  isFeatureEnabled,
   enableRequestEncryption,
-  isRequestEncryptionEnabled,
+  enableResponseDecryption
 } = require('../store');
 
 describe('store.js', () => {
@@ -25,121 +25,111 @@ describe('store.js', () => {
     };
   });
 
-  describe('enableResponseDecryption', () => {
-    it('should store the enableDecryption value for an item', async () => {
+  describe('setFeature', () => {
+    it('should store feature value for an item', async () => {
       const itemId = 'test-item-123';
-      await enableResponseDecryption(mockStore, itemId, true);
-      const storedValue = await mockStore.getItem('enableDecryption:test-item-123');
+      const feature = 'testFeature';
+      await setFeature(mockStore, itemId, feature, true);
+      const storedValue = await mockStore.getItem('testFeature:test-item-123');
       assert.strictEqual(storedValue, 'true');
     });
 
-    it('should update the enableDecryption value when called multiple times', async () => {
+    it('should update feature value when called multiple times', async () => {
       const itemId = 'test-item-123';
-      await enableResponseDecryption(mockStore, itemId, true);
-      await enableResponseDecryption(mockStore, itemId, false);
-      const storedValue = await mockStore.getItem('enableDecryption:test-item-123');
+      const feature = 'testFeature';
+      await setFeature(mockStore, itemId, feature, true);
+      await setFeature(mockStore, itemId, feature, false);
+      const storedValue = await mockStore.getItem('testFeature:test-item-123');
       assert.strictEqual(storedValue, 'false');
     });
 
-    it('should store different values for different items', async () => {
-      const itemId1 = 'test-item-123';
-      const itemId2 = 'test-item-456';
-      await enableResponseDecryption(mockStore, itemId1, true);
-      await enableResponseDecryption(mockStore, itemId2, false);
+    it('should store different values for different features', async () => {
+      const itemId = 'test-item-123';
+      await setFeature(mockStore, itemId, 'feature1', true);
+      await setFeature(mockStore, itemId, 'feature2', false);
 
-      const storedValue1 = await mockStore.getItem('enableDecryption:test-item-123');
-      const storedValue2 = await mockStore.getItem('enableDecryption:test-item-456');
+      const storedValue1 = await mockStore.getItem('feature1:test-item-123');
+      const storedValue2 = await mockStore.getItem('feature2:test-item-123');
+
+      assert.strictEqual(storedValue1, 'true');
+      assert.strictEqual(storedValue2, 'false');
+    });
+
+    it('should store different values for different items', async () => {
+      const feature = 'testFeature';
+      await setFeature(mockStore, 'item1', feature, true);
+      await setFeature(mockStore, 'item2', feature, false);
+
+      const storedValue1 = await mockStore.getItem('testFeature:item1');
+      const storedValue2 = await mockStore.getItem('testFeature:item2');
 
       assert.strictEqual(storedValue1, 'true');
       assert.strictEqual(storedValue2, 'false');
     });
   });
 
-  describe('isResponseDecryptionEnabled', () => {
-    it('should return true when decryption is enabled', async () => {
+  describe('isFeatureEnabled', () => {
+    it('should return true when feature is enabled', async () => {
+      const itemId = 'test-item-123';
+      const feature = 'testFeature';
+      await mockStore.setItem('testFeature:test-item-123', 'true');
+      const result = await isFeatureEnabled(mockStore, itemId, feature);
+      assert.strictEqual(result, true);
+    });
+
+    it('should return false when feature is disabled', async () => {
+      const itemId = 'test-item-123';
+      const feature = 'testFeature';
+      await mockStore.setItem('testFeature:test-item-123', 'false');
+      const result = await isFeatureEnabled(mockStore, itemId, feature);
+      assert.strictEqual(result, false);
+    });
+
+    it('should return false when no value is set', async () => {
+      const itemId = 'test-item-123';
+      const feature = 'testFeature';
+      const result = await isFeatureEnabled(mockStore, itemId, feature);
+      assert.strictEqual(result, false);
+    });
+
+    it('should return false for invalid values', async () => {
+      const itemId = 'test-item-123';
+      const feature = 'testFeature';
+      await mockStore.setItem('testFeature:test-item-123', 'invalid-value');
+      const result = await isFeatureEnabled(mockStore, itemId, feature);
+      assert.strictEqual(result, false);
+    });
+  });
+
+  describe('Response Decryption Feature', () => {
+    it('should enable response decryption using enableResponseDecryption constant', async () => {
+      const itemId = 'test-item-123';
+      await setFeature(mockStore, itemId, enableResponseDecryption, true);
+      const storedValue = await mockStore.getItem('enableDecryption:test-item-123');
+      assert.strictEqual(storedValue, 'true');
+    });
+
+    it('should check response decryption status using enableResponseDecryption constant', async () => {
       const itemId = 'test-item-123';
       await mockStore.setItem('enableDecryption:test-item-123', 'true');
-      const result = await isResponseDecryptionEnabled(mockStore, itemId);
+      const result = await isFeatureEnabled(mockStore, itemId, enableResponseDecryption);
       assert.strictEqual(result, true);
-    });
-
-    it('should return false when decryption is disabled', async () => {
-      const itemId = 'test-item-123';
-      await mockStore.setItem('enableDecryption:test-item-123', 'false');
-      const result = await isResponseDecryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
-    });
-
-    it('should return false when no value is set', async () => {
-      const itemId = 'test-item-123';
-      const result = await isResponseDecryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
-    });
-
-    it('should return false for invalid values', async () => {
-      const itemId = 'test-item-123';
-      await mockStore.setItem('enableDecryption:test-item-123', 'invalid-value');
-      const result = await isResponseDecryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
     });
   });
 
-  describe('enableRequestEncryption', () => {
-    it('should store the enableEncryption value for an item', async () => {
+  describe('Request Encryption Feature', () => {
+    it('should enable request encryption using enableRequestEncryption constant', async () => {
       const itemId = 'test-item-123';
-      await enableRequestEncryption(mockStore, itemId, true);
+      await setFeature(mockStore, itemId, enableRequestEncryption, true);
       const storedValue = await mockStore.getItem('enableEncryption:test-item-123');
       assert.strictEqual(storedValue, 'true');
     });
 
-    it('should update the enableEncryption value when called multiple times', async () => {
-      const itemId = 'test-item-123';
-      await enableRequestEncryption(mockStore, itemId, true);
-      await enableRequestEncryption(mockStore, itemId, false);
-      const storedValue = await mockStore.getItem('enableEncryption:test-item-123');
-      assert.strictEqual(storedValue, 'false');
-    });
-
-    it('should store different values for different items', async () => {
-      const itemId1 = 'test-item-123';
-      const itemId2 = 'test-item-456';
-      await enableRequestEncryption(mockStore, itemId1, true);
-      await enableRequestEncryption(mockStore, itemId2, false);
-
-      const storedValue1 = await mockStore.getItem('enableEncryption:test-item-123');
-      const storedValue2 = await mockStore.getItem('enableEncryption:test-item-456');
-
-      assert.strictEqual(storedValue1, 'true');
-      assert.strictEqual(storedValue2, 'false');
-    });
-  });
-
-  describe('isRequestEncryptionEnabled', () => {
-    it('should return true when encryption is enabled', async () => {
+    it('should check request encryption status using enableRequestEncryption constant', async () => {
       const itemId = 'test-item-123';
       await mockStore.setItem('enableEncryption:test-item-123', 'true');
-      const result = await isRequestEncryptionEnabled(mockStore, itemId);
+      const result = await isFeatureEnabled(mockStore, itemId, enableRequestEncryption);
       assert.strictEqual(result, true);
-    });
-
-    it('should return false when encryption is disabled', async () => {
-      const itemId = 'test-item-123';
-      await mockStore.setItem('enableEncryption:test-item-123', 'false');
-      const result = await isRequestEncryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
-    });
-
-    it('should return false when no value is set', async () => {
-      const itemId = 'test-item-123';
-      const result = await isRequestEncryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
-    });
-
-    it('should return false for invalid values', async () => {
-      const itemId = 'test-item-123';
-      await mockStore.setItem('enableEncryption:test-item-123', 'invalid-value');
-      const result = await isRequestEncryptionEnabled(mockStore, itemId);
-      assert.strictEqual(result, false);
     });
   });
 });
