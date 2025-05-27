@@ -1,0 +1,136 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-05-27T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.0",
+  "resources": [
+    {
+      "_id": "wrk_crypto_test_api",
+      "parentId": null,
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "name": "Crypto Test API",
+      "description": "Test API for insomnia-plugin-crypto",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_crypto_test_api_plaintext",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "url": "http://localhost:3000/api/plaintext",
+      "name": "Get Plaintext Response",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_id": "req_crypto_test_api_encrypted",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "url": "http://localhost:3000/api/encrypted",
+      "name": "Get Encrypted Response",
+      "description": "This endpoint returns an encrypted response. You need to use the 'Toggle Response Decryption' action to see the decrypted content.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_id": "req_crypto_test_api_decrypt",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "url": "http://localhost:3000/api/decrypt",
+      "name": "Post Encrypted Request",
+      "description": "This endpoint accepts an encrypted request. You need to use the 'Toggle Request Encryption' action to encrypt the request body.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"message\": \"This will be encrypted\",\n  \"timestamp\": \"2025-05-27T12:00:00Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_id": "req_crypto_test_api_encrypt",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "url": "http://localhost:3000/api/encrypt",
+      "name": "Post Plaintext, Get Encrypted",
+      "description": "This endpoint accepts a plaintext request and returns an encrypted response. You need to use the 'Toggle Response Decryption' action to see the decrypted content.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"message\": \"Please encrypt this\",\n  \"timestamp\": \"2025-05-27T12:00:00Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_id": "req_crypto_test_api_echo_encrypted",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "url": "http://localhost:3000/api/echo-encrypted",
+      "name": "Echo Encrypted",
+      "description": "This endpoint accepts an encrypted request and returns an encrypted response. You need to use both 'Toggle Request Encryption' and 'Toggle Response Decryption' actions.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"message\": \"This will be encrypted, then decrypted by the server, then re-encrypted\",\n  \"timestamp\": \"2025-05-27T12:00:00Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "_type": "request"
+    },
+    {
+      "_id": "env_crypto_test_api",
+      "parentId": "wrk_crypto_test_api",
+      "modified": 1621436789000,
+      "created": 1621436789000,
+      "name": "Base Environment",
+      "data": {
+        "crypto-alg": "aes-256-cbc",
+        "crypto-key": "4314e401-3876-4e34-8fa6-9a3b88c2",
+        "crypto-base64": true
+      },
+      "dataPropertyOrder": {
+        "&": ["crypto-alg", "crypto-key", "crypto-base64"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1621436789000,
+      "_type": "environment"
+    }
+  ]
+}
