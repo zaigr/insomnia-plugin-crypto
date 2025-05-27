@@ -22,8 +22,10 @@ The plugin provides a response hook that decrypts the response body if decryptio
 
 The plugin provides a request action to toggle body encryption for individual requests.
 
-1. Right-click on the request and select **Toggle Request Decryption**.
+1. Right-click on the request and select **Toggle Request Encryption**.
 2. A notification will appear indicating whether decryption is enabled or disabled for the request.
+
+![Interface in Insomnia](./assets/plugins-view.png)
 
 ## Configuration
 
